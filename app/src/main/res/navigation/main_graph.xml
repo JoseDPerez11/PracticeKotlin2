@@ -28,6 +28,10 @@
         android:id="@+id/horoscopeDetailActivity"
         android:name="com.dsa.practicekotlin2.ui.detail.HoroscopeDetailActivity"
         android:label="activity_horoscope_detail"
-        tools:layout="@layout/activity_horoscope_detail" />
+        tools:layout="@layout/activity_horoscope_detail" >
+        <argument
+            android:name="type"
+            app:argType="com.dsa.practicekotlin2.domain.model.HoroscopeModel" />
+    </activity>
 
 </navigation>
