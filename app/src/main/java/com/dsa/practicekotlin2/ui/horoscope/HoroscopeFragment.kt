@@ -30,6 +30,7 @@ class HoroscopeFragment : Fragment() {
     private var _binding: FragmentHoroscopeBinding? = null
     private val binding get() = _binding!!
 
+    // Se llama cuando la vista del fragmento ha sido creada
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
@@ -40,8 +41,11 @@ class HoroscopeFragment : Fragment() {
         initUIState()
     }
 
+    // Inicializa la lista de horóscopos y configura el RecyclerView
     private fun initList() {
+        // Crea un adaptador para la lista de horóscopos
         horoscopeAdapter = HoroscopeAdapter(onItemSelected =  {
+            // Convierte el tipo de horóscopo seleccionado a un tipo específico del modelo
             val type = when(it) {
                 Aquarius -> HoroscopeModel.Aquarius
                 Aries -> HoroscopeModel.Aries
@@ -57,20 +61,25 @@ class HoroscopeFragment : Fragment() {
                 Virgo -> HoroscopeModel.Virgo
             }
 
+            // Navega a otra actividad pasando el tipo de horóscopo como argumento
             findNavController().navigate(
                 HoroscopeFragmentDirections.actionHoroscopeFragmentToHoroscopeDetailActivity2(type)
             )
         })
 
+        // Configura el RecyclerView con un GridLayoutManager y el adaptador
         binding.rvHoroscope.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = horoscopeAdapter
         }
     }
 
+    // Inicializa el estado de la interfaz de usuario mediante la observación de un flujo de datos
     private fun initUIState() {
         lifecycleScope.launch {
+            // Repite la recolección del flujo de datos mientras el fragmento esté en estado STARTED
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Recolecta el flujo de datos del ViewModel y actualiza la lista del adaptador
                 horoscopeViewModel.horoscope.collect{
                     horoscopeAdapter.updateList(it)
                 }
@@ -78,6 +87,7 @@ class HoroscopeFragment : Fragment() {
         }
     }
 
+    // Se llama cuando la vista del fragmento está siendo creada
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,9 +96,11 @@ class HoroscopeFragment : Fragment() {
         return binding.root
     }
 
+    // Se llama cuando el fragmento está siendo destruido
     override fun onDestroy() {
         super.onDestroy()
+        // Establece el View Binding en null para evitar pérdidas de memoria
         _binding = null
     }
-
+    
 }
