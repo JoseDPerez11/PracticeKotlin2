@@ -1,5 +1,7 @@
 package com.dsa.practicekotlin2.data.network
 
+import com.dsa.practicekotlin2.data.RepositoryImpl
+import com.dsa.practicekotlin2.domain.Repository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,14 +12,25 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHoroscopeApiService(): Retrofit {
+    fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://newastro.vercel.app")
+            .baseUrl("https://newastro.vercel.app/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    @Provides
+    fun provideHoroscopeApiService(retrofit: Retrofit): HoroscopeApiService {
+        return retrofit.create(HoroscopeApiService::class.java)
+    }
+
+    @Provides
+    fun provideRepository(apiService: HoroscopeApiService): Repository {
+        return RepositoryImpl(apiService)
+    }
+
 }
