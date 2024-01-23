@@ -98,6 +98,7 @@ class LuckFragment : Fragment() {
         animator.duration = 2000
         animator.interpolator = DecelerateInterpolator()
         animator.doOnEnd { slideCard() }
+        animator.start()
     }
 
     // Realiza la animación de deslizamiento hacia arriba para la tarjeta
@@ -114,11 +115,10 @@ class LuckFragment : Fragment() {
                 growCard()
             }
 
-            override fun onAnimationRepeat(animation: Animation?) {
-                TODO("Not yet implemented")
-            }
+            override fun onAnimationRepeat(animation: Animation?) { }
 
         })
+        binding.reverse.startAnimation(slideUpAnimation)
     }
 
     // Realiza la animación de crecimiento para la tarjeta
@@ -127,12 +127,12 @@ class LuckFragment : Fragment() {
 
         growAnimation.setAnimationListener(object: Animation.AnimationListener{
 
-            override fun onAnimationStart(animation: Animation?) {
+            override fun onAnimationStart(animation: Animation?) { }
+
+            override fun onAnimationEnd(animation: Animation?) {
                 binding.reverse.isVisible = true
                 showPremonitionView()
             }
-
-            override fun onAnimationEnd(animation: Animation?) { growCard() }
 
             override fun onAnimationRepeat(animation: Animation?) { }
 
@@ -160,6 +160,9 @@ class LuckFragment : Fragment() {
             override fun onAnimationRepeat(animation: Animation?) { }
 
         })
+
+        binding.preview.startAnimation(disapperAnimation)
+        binding.prediction.startAnimation(appearAnimation)
     }
 
     // Crea y devuelve la vista del fragmento inflando el diseño mediante FragmentLuckBinding
@@ -167,8 +170,8 @@ class LuckFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_luck, container, false)
+        _binding = FragmentLuckBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     // Se llama cuando el fragmento está a punto de ser destruido, se utiliza para limpiar referencias y liberar recursos
