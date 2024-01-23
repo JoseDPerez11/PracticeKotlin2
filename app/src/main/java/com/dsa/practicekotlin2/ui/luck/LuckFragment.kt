@@ -41,20 +41,28 @@ class LuckFragment : Fragment() {
 
     // Inicializa la interfaz de usuario y otras configuraciones
     private fun initUI() {
+        // Prepara y muestra la predicción en la interfaz de usuario
         preparePrediction()
+
+        // Inicializa los escuchadores de eventos
         initListeners()
     }
 
+    // Obtiene una predicción aleatoria y actualiza la interfaz de usuario
     private fun preparePrediction() {
         val currentLuck = randomCardProvider.getLucky()
         currentLuck?.let { luck ->
+            // Obtiene la predicción y muestra la información en la interfaz de usuario
             val currentPrediction = getString(luck.text)
             binding.tvLucky.text = currentPrediction
             binding.ivLuckyCard.setImageResource(luck.image)
+
+            // Configura el botón de compartir para compartir la predicción
             binding.tvShare.setOnClickListener{ shareResult(currentPrediction) }
         }
     }
 
+    // Prepara e inicia un Intent para compartir la predicción
     private fun shareResult(prediction: String) {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -66,8 +74,10 @@ class LuckFragment : Fragment() {
         startActivity(shareIntent)
     }
 
+    // Inicializa los escuchadores de eventos, como el deslizamiento en la imagen de la ruleta
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
+        // Configura el deslizamiento en la imagen de la ruleta para activar la rotación
         binding.ivRoulette.setOnTouchListener(object: OnSwipeTouchListener(requireContext()) {
             override fun onSwipeRight() {
                 spinRoulette()
@@ -79,6 +89,7 @@ class LuckFragment : Fragment() {
         })
     }
 
+    // Realiza la animación de rotación de la ruleta
     private fun spinRoulette() {
         val random = Random()
         val degrees = random.nextInt(1440) + 360
@@ -89,6 +100,7 @@ class LuckFragment : Fragment() {
         animator.doOnEnd { slideCard() }
     }
 
+    // Realiza la animación de deslizamiento hacia arriba para la tarjeta
     private fun slideCard() {
         val slideUpAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
 
@@ -109,12 +121,16 @@ class LuckFragment : Fragment() {
         })
     }
 
+    // Realiza la animación de crecimiento para la tarjeta
     private fun growCard() {
         val growAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.grow)
 
         growAnimation.setAnimationListener(object: Animation.AnimationListener{
 
-            override fun onAnimationStart(animation: Animation?) { binding.reverse.isVisible = true }
+            override fun onAnimationStart(animation: Animation?) {
+                binding.reverse.isVisible = true
+                showPremonitionView()
+            }
 
             override fun onAnimationEnd(animation: Animation?) { growCard() }
 
@@ -125,6 +141,7 @@ class LuckFragment : Fragment() {
         binding.reverse.startAnimation(growAnimation)
     }
 
+    // Realiza animaciones de desaparición y aparición para las vistas de premonición y predicción
     private fun showPremonitionView() {
         val disapperAnimation = AlphaAnimation(1.0f, 0.0f)
         disapperAnimation.duration = 200
@@ -145,6 +162,7 @@ class LuckFragment : Fragment() {
         })
     }
 
+    // Crea y devuelve la vista del fragmento inflando el diseño mediante FragmentLuckBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -153,6 +171,7 @@ class LuckFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_luck, container, false)
     }
 
+    // Se llama cuando el fragmento está a punto de ser destruido, se utiliza para limpiar referencias y liberar recursos
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
